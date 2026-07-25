@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Admin Dashboard</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --page-bg: #f8f9fa;
+            --surface: #fff;
+            --surface-border: #d8dde2;
+            --muted-border: #e5e8eb;
+            --main-bg: #7d878f;
+            --text: #222;
+            --muted-text: #5e6870;
+            --heading-text: #848d96;
+            --section-text: #dce0e3;
+            --progress-track: #e8ecef;
+            --toolbar-icon: #7a858e;
+            --alert-bg: #d5f8ff;
+            --alert-text: #0a6871;
+            --footer-text: #6c757d;
+        }
+
+        body.dark-mode {
+            --page-bg: #111827;
+            --surface: #1f2937;
+            --surface-border: #374151;
+            --muted-border: #374151;
+            --main-bg: #111827;
+            --text: #f3f4f6;
+            --muted-text: #cbd5e1;
+            --heading-text: #94a3b8;
+            --section-text: #cbd5e1;
+            --progress-track: #374151;
+            --toolbar-icon: #d1d5db;
+            --alert-bg: #083344;
+            --alert-text: #a5f3fc;
+            --footer-text: #cbd5e1;
+        }
+
+        body {
+            background: var(--page-bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--surface-border);
+            min-height: calc(100vh - 48px);
+            width: 230px;
+        }
+
+        .brand {
+            color: #0d6efd;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: 0;
+        }
+
+        .brand i {
+            font-size: 21px;
+        }
+
+        .sidebar-heading {
+            color: var(--heading-text);
+            font-size: 12px;
+            margin: 0;
+            padding: 13px 18px 8px;
+            text-transform: uppercase;
+        }
+
+        .sidebar .list-group {
+            border-radius: 0;
+            margin: 0 18px 24px;
+        }
+
+        .sidebar .list-group-item {
+            background: var(--surface);
+            border-color: var(--muted-border);
+            color: var(--text);
+            font-size: 13px;
+            padding: 9px 14px;
+        }
+
+        .sidebar .list-group-item.active {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+        }
+
+        .badge-alert {
+            background: #ef3f5f;
+            border-radius: 20px;
+            color: #fff;
+            float: right;
+            font-size: 9px;
+            line-height: 1;
+            margin-top: 3px;
+            padding: 4px 7px;
+        }
+
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--muted-border);
+            min-height: 78px;
+        }
+
+        .main-panel {
+            background: var(--main-bg);
+            min-height: calc(100vh - 128px);
+            padding: 45px 28px 50px;
+        }
+
+        .dashboard-alert {
+            background: var(--alert-bg);
+            border: 0;
+            color: var(--alert-text);
+            font-size: 13px;
+            margin-bottom: 36px;
+            padding: 16px 20px;
+        }
+
+        .dashboard-alert .alert-link {
+            color: inherit;
+        }
+
+        .section-label {
+            color: var(--section-text);
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 9px;
+            text-transform: uppercase;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--muted-border);
+            border-radius: 4px;
+            min-height: 94px;
+            padding: 18px 22px;
+        }
+
+        .stat-card .number {
+            font-size: 30px;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .stat-card .caption {
+            color: #078351;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .content-card {
+            background: var(--surface);
+            border: 1px solid var(--muted-border);
+            border-radius: 4px;
+            flex: 1;
+            min-height: 250px;
+            padding: 20px;
+        }
+
+        .panel-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-row {
+            margin-bottom: 22px;
+        }
+
+        .progress-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-row label {
+            color: var(--muted-text);
+            display: block;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .progress {
+            background: var(--progress-track);
+            border-radius: 0;
+            height: 4px;
+        }
+
+        .table-toolbar {
+            text-align: right;
+        }
+
+        .icon-button {
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 3px;
+            color: var(--toolbar-icon);
+            display: inline-flex;
+            height: 31px;
+            justify-content: center;
+            margin-left: 4px;
+            width: 31px;
+        }
+
+        .data-table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--text);
+            --bs-table-border-color: var(--muted-border);
+            color: var(--text);
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .data-table th {
+            border-top: 0;
+            font-weight: 700;
+        }
+
+        .data-table td,
+        .data-table th {
+            border-color: var(--muted-border);
+            padding: 10px 12px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            background: var(--surface);
+            color: var(--footer-text);
+            font-size: 13px;
+            padding: 24px 0;
+            text-align: center;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 0;
+            color: #0d6efd;
+            height: 38px;
+            width: 38px;
+        }
+
+        body.dark-mode .dropdown-menu {
+            --bs-dropdown-bg: #1f2937;
+            --bs-dropdown-border-color: #374151;
+            --bs-dropdown-link-color: #f3f4f6;
+            --bs-dropdown-link-hover-bg: #374151;
+            --bs-dropdown-link-hover-color: #fff;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 78px;
+            }
+
+            .sidebar .list-group {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .sidebar .list-group-item {
+                text-align: center;
+            }
+
+            .main-panel {
+                padding: 28px 18px 38px;
+            }
+
+            .topbar {
+                min-height: 58px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-0 app-shell">
+        <div class="d-flex">
+            <aside class="sidebar flex-shrink-0">
+                <h1 class="brand h4 text-center py-3 mb-0">
+                    <i class="fa-solid fa-ghost"></i>
+                    <span class="ms-1 d-none d-lg-inline">GHOST<br>ADMIN</span>
+                </h1>
+
+                <p class="sidebar-heading d-none d-lg-block">Controls</p>
+                <ul class="list-group text-lg-start">
+                    <li class="list-group-item active">
+                        <i class="fa-solid fa-house"></i>
+                        <span class="ms-2 d-none d-lg-inline">Dashboard</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fa-solid fa-users"></i>
+                        <span class="ms-2 d-none d-lg-inline">Users</span>
+                        <span class="badge-alert d-none d-lg-inline">20</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span class="ms-2 d-none d-lg-inline">Statistics</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fa-solid fa-flag"></i>
+                        <span class="ms-2 d-none d-lg-inline">Reports</span>
+                    </li>
+                </ul>
+
+                <p class="sidebar-heading d-none d-lg-block">Actions</p>
+                <ul class="list-group text-lg-start">
+                    <li class="list-group-item">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span class="ms-2 d-none d-lg-inline">New User</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span class="ms-2 d-none d-lg-inline">Update Data</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span class="ms-2 d-none d-lg-inline">Add Events</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <main class="flex-grow-1">
+                <nav class="navbar topbar navbar-expand">
+                    <div class="container-fluid justify-content-end">
+                        <ul class="navbar-nav align-items-center">
+                            <li class="nav-item">
+                                <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
+                                    <i class="fa-solid fa-moon"></i>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link text-primary">
+                                    <i class="fa-solid fa-circle-user"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle text-primary px-1" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="#">Logout</a>
+                                </div>
+                            </li>
+                            <li class="nav-item ms-3">
+                                <a href="#" class="nav-link text-primary">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <section class="main-panel">
+                    <div class="alert dashboard-alert rounded-1">
+                        <i class="fa-solid fa-download me-2"></i>
+                        A new version of admin dashboard is released.
+                        <a href="#" class="alert-link">Download Now!</a>
+                    </div>
+
+                    <p class="section-label">Quick Stats</p>
+                    <div class="row g-4 mb-5">
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="number">1,250</div>
+                                <div class="caption">
+                                    <i class="fa-solid fa-chart-line me-1"></i>Daily visitors
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="number">8,210</div>
+                                <div class="caption">
+                                    <i class="fa-solid fa-chart-line me-1"></i>Weekly visitors
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="number">12,560</div>
+                                <div class="caption">
+                                    <i class="fa-solid fa-chart-line me-1"></i>Monthly visitors
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="number">102,250</div>
+                                <div class="caption">
+                                    <i class="fa-solid fa-chart-line me-1"></i>Yearly visitors
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-stretch">
+                        <div class="col-12 col-lg-6 panel-column">
+                            <p class="section-label">Location</p>
+                            <div class="content-card">
+                                <div class="progress-row">
+                                    <label>Regional</label>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-row">
+                                    <label>Global</label>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-primary" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-row">
+                                    <label>Local</label>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-row">
+                                    <label>Internal</label>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-danger" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 panel-column">
+                            <p class="section-label">Data</p>
+                            <div class="content-card">
+                                <div class="table-toolbar">
+                                    <button class="icon-button" type="button" aria-label="Search">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                    <button class="icon-button" type="button" aria-label="Sort">
+                                        <i class="fa-solid fa-arrow-down-wide-short"></i>
+                                    </button>
+                                    <button class="icon-button" type="button" aria-label="Filter">
+                                        <i class="fa-solid fa-filter"></i>
+                                    </button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Age Group</th>
+                                                <th>Data</th>
+                                                <th>Progress</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>20-30</td>
+                                                <td>19%</td>
+                                                <td><i class="fa-solid fa-chart-pie"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>30-40</td>
+                                                <td>40%</td>
+                                                <td><i class="fa-solid fa-chart-column"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>40-50</td>
+                                                <td>20%</td>
+                                                <td><i class="fa-solid fa-chart-line"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>&gt;50</td>
+                                                <td>11%</td>
+                                                <td><i class="fa-solid fa-chart-pie"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="footer">
+                    &copy; Copyright 2020
+                </footer>
+            </main>
+        </div>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('dashboardTheme');
+
+        function setTheme(mode) {
+            const isDark = mode === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            themeIcon.classList.toggle('fa-moon', !isDark);
+            themeIcon.classList.toggle('fa-sun', isDark);
+            localStorage.setItem('dashboardTheme', mode);
+        }
+
+        setTheme(savedTheme === 'dark' ? 'dark' : 'light');
+
+        themeToggle.addEventListener('click', function () {
+            setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+        });
+    </script>
+</body>
+</html>
