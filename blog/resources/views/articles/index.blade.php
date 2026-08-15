@@ -1,17 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Article Index</title>
-</head>
-<body>
-    <h1>Article Index</h1>
-    <ul>
+@extends("layouts.app")
+
+@section("content")
+    <div class="container" style="max-width: 600px">
+
+        {{ $articles->links() }}
+
         @foreach($articles as $article)
-            <li>{{ $article['title'] }}</li>
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h3 class="card-title">{{ $article->title }}</h3>
+                    <div class="text-muted">{{ $article->created_at }}</div>
+                    <p>{{ $article->body }}</p>
+                    <a href="{{ url("/articles/detail/$article->id") }}" class="card-link">View Detail</a>
+                </div>
+            </div>
         @endforeach
-    </ul>
-</body>
-</html>
+    </div>
+@endsection
